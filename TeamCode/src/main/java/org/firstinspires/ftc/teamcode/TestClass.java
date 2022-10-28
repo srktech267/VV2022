@@ -72,8 +72,8 @@ public class TestClass extends LinearOpMode {
 
         runtime.reset();
 
-        robotOps.driveFront( robot, 3000,.3, runtime);
-        robotOps.driveBack( robot, 3000,.3, runtime);
+        robotOps.driveFront( robot, 3000,3);
+        robotOps.driveBack( robot, 3000,3);
         robotOps.turn(robot,3000,45);
         robotOps.turn(robot,3000,45);
 

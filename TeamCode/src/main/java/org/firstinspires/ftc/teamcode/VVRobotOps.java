@@ -51,17 +51,58 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class VVRobotOps extends LinearOpMode {
 
-    //Override
-    public void driveFront(VVRobot robot, double power) {
 
-
-        //rightMotor = hardwareMap.dcMotor.get("RMF");
+    private ElapsedTime     runtime = new ElapsedTime();
+    
+    
+    public void driveFront(VVRobot robot, double power,int driveTime) {
+       
         try {
 
-            robot.front_left_wheel.setPower(power);
-            robot.front_right_wheel.setPower(power);
-            robot.back_left_wheel.setPower(power);
-            robot.back_right_wheel.setPower(power);
+
+            runtime.reset();
+            
+
+            while (true)
+            {
+                robot.setWheelsMoveForward();
+                robot.setWheelsSpeed(power,power,power,power);
+
+                Log.i("VVRobot", "runtime" + runtime.milliseconds() );
+                if ( runtime.milliseconds() >= driveTime )
+                {
+                    robot.stop();
+                    break;
+                }
+            }
+                       
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    public void driveBack(VVRobot robot, double power,int driveTime) {
+
+        try {
+
+
+            runtime.reset();
+            
+
+            while (true)
+            {
+                robot.setWheelsMoveBackward();
+                robot.setWheelsSpeed(power,power,power,power);
+
+                Log.i("VVRobot", "runtime" + runtime.milliseconds() );
+                if ( runtime.milliseconds() >= driveTime )
+                {
+                    robot.stop();
+                    break;
+                }
+            }
 
 
         } catch (Exception e) {
@@ -70,17 +111,17 @@ public class VVRobotOps extends LinearOpMode {
         }
     }
 
-    public void driveFront(VVRobot robot, int driveTime, double maxPower, ElapsedTime runtime) {
+    public void driveFrontWithSpeedControl(VVRobot robot, int driveTime, double maxPower) {
 
 
         robot.setWheelsMoveForward();
         try {
 
-            int drivetime = driveTime;
+             
             double speed = 0;
 
-
-
+            runtime.reset();
+            
 
             while (true)
             {
@@ -88,8 +129,8 @@ public class VVRobotOps extends LinearOpMode {
                     speed = speed + .005;
                 }
                setRobotSpeed(robot, speed);
-                Log.i("vikingTech", "runtime" + runtime.milliseconds() );
-                if ( runtime.milliseconds() >= drivetime /2)
+                Log.i("VVRobot", "runtime" + runtime.milliseconds() );
+                if ( runtime.milliseconds() >= driveTime /2)
                 {
                     break;
                 }
@@ -106,28 +147,30 @@ public class VVRobotOps extends LinearOpMode {
 
                 setRobotSpeed(robot, speed);
 
-                Log.i("vikingTech", "runtime" + runtime.milliseconds() );
-                if ( runtime.milliseconds() >= drivetime )
+                Log.i("VVRobot", "runtime" + runtime.milliseconds() );
+                if ( runtime.milliseconds() >= driveTime )
                 {
                     break;
                 }
             }
 
 
-            setRobotSpeed(robot, 0);
+            robot.stop();
         } catch (Exception e) {
             e.printStackTrace();
 
         }
     }
 
-    public void driveBack(VVRobot robot, int driveTime, double maxPower, ElapsedTime runtime) {
+    public void driveBackWithSpeedControl(VVRobot robot, int driveTime, double maxPower ) {
 
 
         //rightMotor = hardwareMap.dcMotor.get("RMF");
         try {
+            runtime.reset();
+            
             robot.setWheelsMoveBackward();
-            int drivetime = driveTime;
+           
             double speed = 0;
 
             while (true)
@@ -136,8 +179,8 @@ public class VVRobotOps extends LinearOpMode {
                     speed = speed + .005;
                 }
                 setRobotSpeed(robot, speed);
-                Log.i("vikingTech", "runtime" + runtime.milliseconds() );
-                if ( runtime.milliseconds() >= drivetime /2)
+                Log.i("VVRobot", "runtime" + runtime.milliseconds() );
+                if ( runtime.milliseconds() >= driveTime /2)
                 {
                     break;
                 }
@@ -154,69 +197,58 @@ public class VVRobotOps extends LinearOpMode {
 
                 setRobotSpeed(robot, speed);
 
-                Log.i("vikingTech", "runtime" + runtime.milliseconds() );
-                if ( runtime.milliseconds() >= drivetime )
+                Log.i("VVRobot", "runtime" + runtime.milliseconds() );
+                if ( runtime.milliseconds() >= driveTime )
                 {
                     break;
                 }
             }
 
 
-            setRobotSpeed(robot, 0);
+            robot.stop();
         } catch (Exception e) {
             e.printStackTrace();
 
         }
     }
 
-    public void slideRight(VVRobot robot, double power, int time)
+    public void slideRight(VVRobot robot, double power, int driveTime)
     {
-        robot.front_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.back_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.back_right_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.front_right_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.setWheelsMoveForward();
 
-    
+       
+       runtime.reset();
 
-        robot.front_left_wheel.setPower(power);
-        robot.front_right_wheel.setPower(power);
-        robot.back_left_wheel.setPower(-power);
-        robot.back_right_wheel.setPower(-power);
+
+             robot.setWheelsSpeed(power,-power,-power,power);
+
+             sleep(driveTime);
+
+
         
-
-    }
-    
-    public void slideRightdemo(VVRobot robot, double power, int time)
-    {
-     //  robot.front_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-    //    robot.back_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.front_right_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-       // robot.back_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-
-    
-
-        robot.front_left_wheel.setPower(power);
-        robot.front_right_wheel.setPower(0);
-        
-        robot.back_left_wheel.setPower(0);
-        robot.back_right_wheel.setPower(0);
         
 
     }
 
-    public void slideLeft(VVRobot robot, double power, int time)
-    {
-        robot.front_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.back_left_wheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        robot.back_right_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.front_right_wheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        robot.front_left_wheel.setPower(power);
-        robot.front_right_wheel.setPower(power);
-        robot.back_left_wheel.setPower(power);
-        robot.back_right_wheel.setPower(power);
+    public void slideLeft(VVRobot robot, double power, int driveTime)
+    {
+        robot.setWheelsMoveForward();
+
+
+
+
+            robot.setWheelsSpeed(-power,power,power,-power);
+
+            sleep(driveTime);
+
+
+
 
     }
+
+
+
     public void setRobotSpeed(VVRobot robot, double speed)
     {
 
@@ -225,26 +257,7 @@ public class VVRobotOps extends LinearOpMode {
         robot.back_left_wheel.setPower(speed);
         robot.back_right_wheel.setPower(speed);
     }
-    public void driveFront(VVRobot robot, double power, int time ) {
-
-
-        //rightMotor = hardwareMap.dcMotor.get("RMF");
-        try {
-
-
-            robot.front_left_wheel.setPower(power);
-            robot.front_right_wheel.setPower(power);
-            robot.back_left_wheel.setPower(power);
-            robot.back_right_wheel.setPower(power);
-            sleep(time);
-            Stop(robot);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-    }
+    
     public void driveBack(VVRobot robot, double power)  {
 
         try {
@@ -267,101 +280,34 @@ public class VVRobotOps extends LinearOpMode {
 
 
     }
+ 
+     
 
-    public void driveBack(VVRobot robot, double power, int time)  {
+    public void turn(VVRobot robot,int direction ,int degrees)
+    {
 
-        try {
-
-            //rightMotor = hardwareMap.dcMotor.get("RMF");
-            robot.front_right_wheel.setDirection(DcMotorSimple.Direction.REVERSE);
-            robot.back_right_wheel.setDirection(DcMotorSimple.Direction.REVERSE);
-
-            robot.front_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-            robot.back_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-
-            robot.front_left_wheel.setPower(power);
-            robot.front_right_wheel.setPower(power);
-            robot.back_left_wheel.setPower(power);
-            robot.back_right_wheel.setPower(power);
-            sleep(time);
-            Stop(robot);
-
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        double power = .3;
+        robot.setWheelsMoveForward();
 
 
-    }
-    public void Stop(VVRobot robot) {
-
-        //Log.i("vikingTech","robot stopping");
-        robot.front_left_wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.back_left_wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.front_right_wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.back_right_wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        robot.front_left_wheel.setPower(0);
-        robot.front_right_wheel.setPower(0);
-        robot.back_left_wheel.setPower(0);
-        robot.back_right_wheel.setPower(0);
-    }
 
 
-    public void turn(VVRobot robot, double power , int deg)  {
-
-        //rightMotor = hardwareMap.dcMotor.get("RMF");
-        robot.front_right_wheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        robot.back_right_wheel.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        robot.front_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.back_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        robot.front_left_wheel.setPower(power);
-        robot.front_right_wheel.setPower(-power);
-        robot.back_left_wheel.setPower(power);
-        robot.back_right_wheel.setPower(-power);
-
-        //run for .875 seconds
-        sleep(20*deg);
-
-    }
-    public void setRobotMotorPower(VVRobot robot, double rightPower , double leftPower)  {
-
-        //rightMotor = hardwareMap.dcMotor.get("RMF");
-        robot.front_right_wheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        robot.back_right_wheel.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        robot.front_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.back_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        robot.front_left_wheel.setPower(leftPower);
-        robot.back_left_wheel.setPower(leftPower);
-
-        robot.back_right_wheel.setPower(rightPower);
-        robot.front_right_wheel.setPower(rightPower);
-
-    }
-    public void setRobotMotorPower(VVRobot robot, double front_right_wheel , double front_left_wheel , double back_right_wheel, double back_left_wheel)  {
-
-
-        robot.front_right_wheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        robot.back_right_wheel.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        robot.front_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.back_left_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-
-
-        robot.front_right_wheel.setPower(front_right_wheel);
-        robot.front_left_wheel.setPower(front_left_wheel);
-
-        robot.back_right_wheel.setPower(back_right_wheel);
-        robot.back_left_wheel.setPower(back_left_wheel);
+       if (direction <0)
+       {
+           robot.setWheelsSpeed(-power,power,-power,power);
+           sleep (degrees);
+       }else if(direction>0)
+       {
+           robot.setWheelsSpeed(power,-power,power,-power);
+           sleep (degrees);
+       }
 
 
 
 
     }
+   
+     
     public void turn(VVRobot robot, double rightPower , double leftPower)  {
 
         //rightMotor = hardwareMap.dcMotor.get("RMF");
@@ -376,6 +322,7 @@ public class VVRobotOps extends LinearOpMode {
 
         robot.back_right_wheel.setPower(rightPower);
         robot.front_right_wheel.setPower(rightPower);
+
 
     }
 

@@ -31,23 +31,18 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import com.qualcomm.robotcore.hardware. Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
-import org.checkerframework.checker.units.qual.Speed;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+
 
 // based Mech setup and gear positions , FL and BL should have opposite polarity / speed/ direction
 //FL,FR
@@ -103,9 +98,12 @@ public class VVRobot
     public DcMotor  back_right_wheel  = null;
 
 
+    public Servo getConePickupServo() {
+        return conePickupServo;
+    }
 
     // to pick up rings
-    public DcMotor  conePickupMotor = null;
+    public  Servo conePickupServo= null;
     public DcMotor  conveyorMotor   = null;
 
     // to shoot rings
@@ -151,11 +149,11 @@ public class VVRobot
         front_right_wheel = hardwareMap.get(DcMotor.class, VVHardwareMapping.front_right_wheel);
         back_right_wheel = hardwareMap.get(DcMotor.class, VVHardwareMapping.back_right_wheel);
 
-        if (VVHardwareMapping.conePickupMotor != null)
+        if (VVHardwareMapping.conePickupServo != null)
         {
-            conePickupMotor = hardwareMap.get(DcMotor.class, VVHardwareMapping.conePickupMotor);
-            conePickupMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            conePickupMotor.setDirection(DcMotor.Direction.FORWARD);
+            conePickupServo =  hardwareMap.get(Servo.class,VVHardwareMapping.conePickupServo);
+            conePickupServo.getController().pwmEnable();
+
         }
 
 
@@ -165,6 +163,7 @@ public class VVRobot
             armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             armMotor.setDirection(DcMotor.Direction.FORWARD);
         }
+
 
 
         front_left_wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -217,6 +216,14 @@ public class VVRobot
 
     }
 
+    public void stop()
+    {
+        front_left_wheel.setPower(0);
+        front_right_wheel.setPower(0);
+        back_left_wheel.setPower(0);
+        back_right_wheel.setPower(0);
+
+    }
 
     public void setWheelsMoveBackward()
     {
@@ -233,7 +240,8 @@ public class VVRobot
 
     }
 
-    public void setWheelsMoveForward()
+    public void
+    setWheelsMoveForward()
     {
 
         // based Mech setup and gear positions , FL and BL should have opposite polarity / speed/ direction
