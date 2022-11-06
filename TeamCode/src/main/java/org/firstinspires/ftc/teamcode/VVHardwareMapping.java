@@ -62,8 +62,8 @@ public  class VVHardwareMapping {
     public static final String  back_left_wheel  = "RLM";
 
 
-    public static final String  conePickupMotor  = null;
-    public static final String  armMotor  = null;
+    public static final String  conePickupServo = "CPM";
+    public static final String  armMotor  = "ARM";
 
 
 

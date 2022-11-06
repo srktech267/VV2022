@@ -32,8 +32,11 @@ package org.firstinspires.ftc.teamcode;
 
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -51,7 +54,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="VVTeleOpFour*", group="Tele-op")
-
+@Disabled
 public class VVTeleOpFour extends LinearOpMode {
 
 
@@ -66,6 +69,7 @@ public class VVTeleOpFour extends LinearOpMode {
     public double leftRearPower;
     public double rightFrontPower;
     public double rightRearPower;
+    public double armPower;
     public double robotSpeed;
     public boolean constrainMovement;
 
@@ -86,6 +90,9 @@ public class VVTeleOpFour extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         telemetry.addData("Status", "Initialized");
         VVRobot robot = new VVRobot(hardwareMap);
+        Servo servo = robot.getConePickupServo();
+
+        VVClaw claw = new VVClaw(robot.getConePickupServo(),telemetry);
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -166,12 +173,53 @@ public class VVTeleOpFour extends LinearOpMode {
                     rightRearPower = (y + x + rx) / denominator;
                 }
 
+                if (gamepad2.dpad_up) {
+                     robot.armMotor.setPower(-.6);
+
+                } else  if (gamepad2.dpad_down) {
+
+
+                    robot.armMotor.setPower(.2);
+                   
+                } else
+                {
+
+                    robot.armMotor.setPower(-.02);
+                    robot.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                }
+
+                if (gamepad2.left_bumper)
+                {
+                    // Set the servo to the new position and pause;
+                    //open
+                    servo.setDirection(Servo.Direction.REVERSE);
+                    servo.setPosition(.6);
+                    sleep(1000);
+                    servo.getController().pwmDisable();
+                }
+                else if  (gamepad2.right_bumper)
+                {
+                    // Set the servo to the new position and pause;
+                    //close
+                    servo.getController().pwmEnable();
+                    servo.setDirection(Servo.Direction.FORWARD);
+                    servo.setPosition(1);
+                    sleep(1000);
+
+                }else
+                {
+                    claw.getVvServo().getController().pwmDisable();
+                }
+
+
 
                 robot.setWheelsSpeed(leftFrontPower * robotSpeed, -rightFrontPower * robotSpeed,
                                       leftRearPower * robotSpeed, -rightRearPower * robotSpeed);
             }
             // End gamepad 1
         } catch (Exception e) {
+            telemetry.addData(">",e.toString());
+                    telemetry.update();
             e.printStackTrace();
         }
 

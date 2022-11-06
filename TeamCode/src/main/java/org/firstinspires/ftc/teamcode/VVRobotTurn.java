@@ -138,7 +138,7 @@ public class VVRobotTurn extends LinearOpMode
             }
 
         // turn the motors off.
-        robotOps.Stop(robot);
+       robot.stop();
 
         // wait for rotation to stop.
         sleep(1000);
@@ -205,7 +205,7 @@ public class VVRobotTurn extends LinearOpMode
 
             }
 
-    robotOps.Stop(robot); //our helper method to set all wheel motors to zero
+    robot.stop(); //our helper method to set all wheel motors to zero
     sleep(250); //small pause at end of turn
 }
 }

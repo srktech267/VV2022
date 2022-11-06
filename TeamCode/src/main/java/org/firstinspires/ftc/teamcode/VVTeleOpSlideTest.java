@@ -32,9 +32,12 @@ package org.firstinspires.ftc.teamcode;
 
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -51,9 +54,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="VVTeleOpThird", group="Tele-op")
+@Autonomous(name="VVTeleOpSlideTest", group="Tele-op")
 @Disabled
-public class VVTeleOpThird extends LinearOpMode {
+public class VVTeleOpSlideTest extends LinearOpMode {
 
 
 
@@ -67,6 +70,7 @@ public class VVTeleOpThird extends LinearOpMode {
     public double leftRearPower;
     public double rightFrontPower;
     public double rightRearPower;
+    public double armPower;
     public double robotSpeed;
     public boolean constrainMovement;
 
@@ -87,6 +91,10 @@ public class VVTeleOpThird extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         telemetry.addData("Status", "Initialized");
         VVRobot robot = new VVRobot(hardwareMap);
+        Servo servo = robot.getConePickupServo();
+        VVRobotOps robotOps = new VVRobotOps();
+
+        VVClaw claw = new VVClaw(robot.getConePickupServo(),telemetry);
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -118,61 +126,22 @@ public class VVTeleOpThird extends LinearOpMode {
 
         try {
 
-            while (opModeIsActive()) {
-                // Everything gamepad 1:
-                // User controls for the robot speed overall
-                if (gamepad1.left_trigger != 0) {
-                    robotSpeed = baseSpeed * 1.4;
-                } else if (gamepad1.right_trigger != 0) {
-                    robotSpeed = baseSpeed * .4;
-                } else {
-                    robotSpeed = baseSpeed;
-                }
-                if (gamepad1.a) {
-                    //Button A = unconstrained movement
-                    constrainMovement = false;
-                }
-                if (gamepad1.b) {
-                    //Button B = constrained movement
-                    constrainMovement = true;
-                    // Flip the boolean to toggle modes for drive contraints
-                    //constrainMovement = !constrainMovement;
-                }
-                // We cubed the inputs to make the inputs more responsive
-                y = Math.pow(gamepad1.left_stick_y, 3); // Remember, this is reversed!
-                x = Math.pow(gamepad1.left_stick_x * -1.1, 3); // Counteract imperfect strafing
-                rx = Math.pow(gamepad1.right_stick_x, 3) * 0.5;  //Reduced turn speed to make it easier to control
+            waitForStart();
 
-                // Denominator is the largest motor power (absolute value) or 1
-                // This ensures all the powers maintain the same ratio, but only when
-                // at least one is out of the range [-1, 1]
-                double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-                if (constrainMovement) {
-                    if (x > y) {
-                        leftFrontPower = (x - rx) / denominator;
-                        leftRearPower = (-x - rx) / denominator;
-                        rightFrontPower = (-x + rx) / denominator;
-                        rightRearPower = (x + rx) / denominator;
-                    }
-                    if (y > x) {
-                        leftFrontPower = (y - rx) / denominator;
-                        leftRearPower = (y - rx) / denominator;
-                        rightFrontPower = (y + rx) / denominator;
-                        rightRearPower = (y + rx) / denominator;
-                    }
-                } else {
-                    leftFrontPower = (y + x - rx) / denominator;
-                    leftRearPower = (y - x - rx) / denominator;
-                    rightFrontPower = (y - x + rx) / denominator;
-                    rightRearPower = (y + x + rx) / denominator;
-                }
+            if (opModeIsActive()) {
 
 
-                robot.setWheelsSpeed(leftFrontPower * robotSpeed, -rightFrontPower * robotSpeed,
-                                      leftRearPower * robotSpeed, -rightRearPower * robotSpeed);
+
+                    robotOps.slideRight(robot, .3, 2200);
+
+                    robotOps.slideLeft(robot, .3, 2200);
+
+
             }
             // End gamepad 1
         } catch (Exception e) {
+            telemetry.addData(">",e.toString());
+                    telemetry.update();
             e.printStackTrace();
         }
 
