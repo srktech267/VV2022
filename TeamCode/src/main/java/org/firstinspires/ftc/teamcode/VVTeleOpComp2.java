@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode;
 
 
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -53,9 +55,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="VVTeleOpFour*", group="Tele-op")
-@Disabled
-public class VVTeleOpFour extends LinearOpMode {
+@TeleOp(name="VVTeleOpComp2", group="Tele-op")
+
+public class VVTeleOpComp2 extends LinearOpMode {
 
 
 
@@ -92,10 +94,10 @@ public class VVTeleOpFour extends LinearOpMode {
         VVRobot robot = new VVRobot(hardwareMap);
         Servo servo = robot.getConePickupServo();
 
-        VVClaw claw = new VVClaw(robot.getConePickupServo(),telemetry);
 
 
         // Wait for the game to start (driver presses PLAY)
+        servo.getController().pwmEnable();
         waitForStart();
         runtime.reset();
 
@@ -174,7 +176,7 @@ public class VVTeleOpFour extends LinearOpMode {
                 }
 
                 if (gamepad2.dpad_up) {
-                     robot.armMotor.setPower(-.6);
+                     robot.armMotor.setPower(-.4);
 
                 } else  if (gamepad2.dpad_down) {
 
@@ -192,23 +194,26 @@ public class VVTeleOpFour extends LinearOpMode {
                 {
                     // Set the servo to the new position and pause;
                     //open
+                    Log.i("VVServo", "Before open : "+servo.getPosition());
                     servo.setDirection(Servo.Direction.REVERSE);
-                    servo.setPosition(.6);
-                    sleep(1000);
-                    servo.getController().pwmDisable();
+                    servo.setPosition(2);
+                    servo.setDirection(Servo.Direction.FORWARD);
+
+                    Log.i("VVServo", "after open : "+servo.getPosition());
+
+
                 }
                 else if  (gamepad2.right_bumper)
                 {
                     // Set the servo to the new position and pause;
                     //close
-                    servo.getController().pwmEnable();
+
+                    Log.i("VVServo", "Before close : "+servo.getPosition());
                     servo.setDirection(Servo.Direction.FORWARD);
                     servo.setPosition(1);
-                    sleep(1000);
-
-                }else
-                {
-                    claw.getVvServo().getController().pwmDisable();
+                    servo.setDirection(Servo.Direction.REVERSE);
+                    Log.i("VVServo", "After Close : "+servo.getPosition());
+                     
                 }
 
 

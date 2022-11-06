@@ -32,10 +32,12 @@ package org.firstinspires.ftc.teamcode;
 
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -52,15 +54,30 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Pushbot: VVTeleOpAdv123", group="Pushbot")
+@Autonomous(name="VVTeleOpSlideTest", group="Tele-op")
 @Disabled
-public class VVTeleOpAdv extends LinearOpMode {
+public class VVTeleOpSlideTest extends LinearOpMode {
 
-    /* Declare OpMode members. */
-    VVHardwareMapping robot = new VVHardwareMapping();   // Use a Pushbot's hardware
-    double clawOffset = 0;                       // Servo mid position
-    final double CLAW_SPEED = 0.02;                   // sets rate to move servo
+
+
     private ElapsedTime runtime = new ElapsedTime();
+
+    // Initialize our local variables for use later in telemetry or other methods
+    public double y;
+    public double x;
+    public double rx;
+    public double leftFrontPower;
+    public double leftRearPower;
+    public double rightFrontPower;
+    public double rightRearPower;
+    public double armPower;
+    public double robotSpeed;
+    public boolean constrainMovement;
+
+    // Initialize our local variables with values
+    // These "slow" variable is used to control the overall speed of the robot
+    // TODO: Work with Drive Team to determine
+    public double baseSpeed = 0.70;
 
     @Override
 
@@ -74,87 +91,65 @@ public class VVTeleOpAdv extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         telemetry.addData("Status", "Initialized");
         VVRobot robot = new VVRobot(hardwareMap);
+        Servo servo = robot.getConePickupServo();
+        VVRobotOps robotOps = new VVRobotOps();
 
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        robot.front_right_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.back_right_wheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.front_left_wheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        robot.back_left_wheel.setDirection(DcMotorSimple.Direction.REVERSE);  
+        VVClaw claw = new VVClaw(robot.getConePickupServo(),telemetry);
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        // based Mech setup and gear positions , FL and BL should have opposite polarity / speed/ direction
+        //FL,FR
+        //BL,BR
+        //1,2
+        //3,4
+        //-,+
+        //-,+
 
-           //set once a loop
-           //read the input once
+        // Configure initial variables
+        constrainMovement = false;
+        //Wait for the driver to press PLAY on the driver station phone
+        // make a new thread
+        telemetry.addData("Status", "Fully Initialized");
+        telemetry.update();
+
+
+        waitForStart();
+        //Run until the end (Driver presses STOP)
+
+
+        // Polling rate for logging gets set to zero before the while loop
+        int i = 0;
+
+        try {
+
+            waitForStart();
+
+            if (opModeIsActive()) {
 
 
 
-            double Speed = -gamepad1.left_stick_y;
-            double Turn = gamepad1.left_stick_x;
-            double Strafe = gamepad1.right_stick_x;
-            double MAX_SPEED = 1.0;
-            mecanumDrive();
+                    robotOps.slideRight(robot, .3, 2200);
 
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
-
-            if(gamepad1.a)
-            {
-                robot.front_right_wheel.setPower(-gamepad1.right_stick_y);
-                robot.back_right_wheel.setPower(-gamepad1.right_stick_y);
-                robot.front_left_wheel.setPower(-gamepad1.left_stick_y);
-                robot.back_left_wheel.setPower(-gamepad1.left_stick_y);
-
-                robot.front_right_wheel.setPower(-0.5);
-                robot.back_right_wheel.setPower(0.5);
-                robot.front_left_wheel.setPower(0.5);
-                robot.back_left_wheel.setPower(-0.5);
+                    robotOps.slideLeft(robot, .3, 2200);
 
 
             }
-            else {
-                robot.front_right_wheel.setPower(0.0);
-                robot.back_right_wheel.setPower(0.0);
-                robot.front_left_wheel.setPower(0.0);
-                robot.back_left_wheel.setPower(0.0);
-            }
-
-
-
-
+            // End gamepad 1
+        } catch (Exception e) {
+            telemetry.addData(">",e.toString());
+                    telemetry.update();
+            e.printStackTrace();
         }
-    }
-    public void mecanumDrive()
-    {
-        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-        double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-        double rightX = gamepad1.right_stick_x;
-        final double v1 = r * Math.cos(robotAngle) + rightX;
-        final double v2 = r * Math.sin(robotAngle) - rightX;
-        final double v3 = r * Math.sin(robotAngle) + rightX;
-        final double v4 = r * Math.cos(robotAngle) - rightX;
+
     }
 
-    public static double calc1(double Vd, double Td, double Vt) {
-        double V;
 
-        V = Vd * Math.sin(Td + (Math.PI / 4)) + Vt;
-        return V;
     }
 
-    public static double calc2(double Vd, double Td, double Vt) {
-        double V;
-
-        V = Vd * Math.cos(Td + (Math.PI / 4)) + Vt;
-        return V;
-    }
-}
 
 
 

@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -49,7 +50,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="Autoop2022demo" + "", group="AutoTestVV2022")
-//Disabled
+@Disabled
 public class TestClass extends LinearOpMode {
 
     // Declare OpMode members.
@@ -72,8 +73,8 @@ public class TestClass extends LinearOpMode {
 
         runtime.reset();
 
-        robotOps.driveFront( robot, 3000,.3, runtime);
-        robotOps.driveBack( robot, 3000,.3, runtime);
+        robotOps.driveFront( robot, 3000,3);
+        robotOps.driveBack( robot, 3000,3);
         robotOps.turn(robot,3000,45);
         robotOps.turn(robot,3000,45);
 
