@@ -34,6 +34,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -57,7 +58,7 @@ import org.firstinspires.ftc.teamcode.core.VVRobot;
  */
 
 @TeleOp(name="VVTeleOpPWP", group="Tele-op")
-
+@Disabled
 public class VVTeleOpPWP extends LinearOpMode {
 
 
@@ -83,7 +84,7 @@ public class VVTeleOpPWP extends LinearOpMode {
     // Initialize our local variables with values
     // These "slow" variable is used to control the overall speed of the robot
     // TODO: Work with Drive Team to determine
-    public double baseSpeed = 0.9;
+    public double baseSpeed = 0.95;
 
     public int lowJunction  = -1200;
     public int midJunction  = -2000;

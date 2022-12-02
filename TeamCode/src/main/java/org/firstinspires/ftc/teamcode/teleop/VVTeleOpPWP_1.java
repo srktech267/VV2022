@@ -34,7 +34,6 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import android.util.Log;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -57,9 +56,9 @@ import org.firstinspires.ftc.teamcode.core.VVRobot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="VVTeleOP_2", group="Tele-op")
-@Disabled
-public class VVTeleOp5TestPWP extends LinearOpMode {
+@TeleOp(name="VVTeleOpQUAL_HIGH", group="Tele-op")
+
+public class VVTeleOpPWP_1 extends LinearOpMode {
 
 
 
@@ -79,16 +78,16 @@ public class VVTeleOp5TestPWP extends LinearOpMode {
 
     public int baseEncoderCount =0;
     public int currentEncoderCount =0;
-    public int maxEncoderCount = 2900;
+    public int maxEncoderCount = 2800;
 
     // Initialize our local variables with values
     // These "slow" variable is used to control the overall speed of the robot
     // TODO: Work with Drive Team to determine
-    public double baseSpeed = 0.95;
+    public double baseSpeed = 0.8;
 
     public int lowJunction  = -1200;
     public int midJunction  = -2000;
-    public int highJunction = -2800;
+    public int highJunction = -2600;
     public int STARTING_POSITION = 0;
     VVRobot robot;
     @Override
@@ -109,6 +108,7 @@ public class VVTeleOp5TestPWP extends LinearOpMode {
 
         baseEncoderCount = robot.armMotor.getCurrentPosition();
 
+
         // Wait for the game to start (driver presses PLAY)
         servo.getController().pwmEnable();
 
@@ -122,6 +122,7 @@ public class VVTeleOp5TestPWP extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+
         // based Mech setup and gear positions , FL and BL should have opposite polarity / speed/ direction
         //FL,FR
         //BL,BR
@@ -133,13 +134,12 @@ public class VVTeleOp5TestPWP extends LinearOpMode {
         // Polling rate for logging gets set to zero before the while loop
         int i = 0;
 
-        int temp = 0;
-
         try {
 
 
 
-            while (opModeIsActive()) {
+            while (opModeIsActive())
+            {
 
 
                 if (gamepad2.left_bumper)
@@ -175,7 +175,7 @@ public class VVTeleOp5TestPWP extends LinearOpMode {
 // Everything gamepad 1:
                 // User controls for the robot speed overall
                 if (gamepad1.left_trigger != 0) {
-                    robotSpeed = baseSpeed * 1.4;
+                    robotSpeed = baseSpeed * 1;
                 } else if (gamepad1.right_trigger != 0) {
                     robotSpeed = baseSpeed * .4;
                 } else {
@@ -193,7 +193,7 @@ public class VVTeleOp5TestPWP extends LinearOpMode {
                 }
                 // We cubed the inputs to make the inputs more responsive
                 y = Math.pow(gamepad1.left_stick_y, 3); // Remember, this is reversed!
-                x = Math.pow(gamepad1.left_stick_x * -1.1, 3); // Counteract imperfect strafing
+                x = Math.pow(gamepad1.left_stick_x * -1, 3); // Counteract imperfect strafing
                 rx = Math.pow(gamepad1.right_stick_x, 3) * 0.5;  //Reduced turn speed to make it easier to control
 
                 // Denominator is the largest motor power (absolute value) or 1
@@ -232,19 +232,15 @@ public class VVTeleOp5TestPWP extends LinearOpMode {
                 }
 
 
-                Log.i("teleop2", String.valueOf(gamepad2.left_stick_y));
+                Log.i("VVTeleOpPWP", String.valueOf(gamepad2.left_stick_y));
 
                 //set arm with analog stick
                 if (gamepad2.left_stick_y !=0 )
                 {
-
+                   
                     if ((Math.abs(currentEncoderCount) < Math.abs(maxEncoderCount) ) && (gamepad2.left_stick_y  < 0)  )
                     {
-
-                      //  robot.armMotor.setPower(gamepad2.left_stick_y * (1-(Math.abs(currentEncoderCount)-(Math.abs(maxEncoderCount)))/150));
-
-                        temp = Math.abs(  (maxEncoderCount-currentEncoderCount)/maxEncoderCount  );
-                        robot.armMotor.setPower(gamepad2.left_stick_y *  temp);
+                        robot.armMotor.setPower(gamepad2.left_stick_y * 1);
 
                     }
                     else
@@ -254,15 +250,11 @@ public class VVTeleOp5TestPWP extends LinearOpMode {
                 }
                 else
                 {
-                    robot.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    robot.armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    robot.armMotor.setPower(0);
                     //code to prevent the Arm coming crashing down
                     robot.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    robot.armMotor.setPower(0);
 
                 }
-
-
 
 
                 robot.setWheelsSpeed(leftFrontPower * robotSpeed*.95, -rightFrontPower * robotSpeed*.95,
@@ -278,16 +270,7 @@ public class VVTeleOp5TestPWP extends LinearOpMode {
 
     }
 
-    public void vvSleepEncoder()
-    {
 
-        while (opModeIsActive() && robot.armMotor.isBusy())
-        {
-            // Display it for the driver.
-            Log.e("VVTeleOpPWP",  " Currently at %7d :%7d"+ robot.armMotor.getCurrentPosition() );
-            telemetry.update();
-        }
-    }
 
 }
 
